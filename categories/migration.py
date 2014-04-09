@@ -1,6 +1,5 @@
 from django.db import models, DatabaseError
 from django.core.exceptions import ImproperlyConfigured
-from django.utils.translation import ugettext_lazy as _
 
 
 def migrate_app(sender, app, created_models=None, verbosity=False, *args, **kwargs):
@@ -18,7 +17,7 @@ def migrate_app(sender, app, created_models=None, verbosity=False, *args, **kwar
     try:
         from south.db import db
     except ImportError:
-        raise ImproperlyConfigured(_('%(dependency) must be installed for this command to work') %
+        raise ImproperlyConfigured('%(dependency) must be installed for this command to work' %
                                    {'dependency': 'South'})
     # pull the information from the registry
     if isinstance(app, basestring):
@@ -43,13 +42,13 @@ def migrate_app(sender, app, created_models=None, verbosity=False, *args, **kwar
                 db.add_column(table_name, field_name, FIELD_REGISTRY[fld], keep_default=False)
                 db.commit_transaction()
                 if verbosity:
-                    print (_('Added ForeignKey %(field_name) to %(model_name)') %
+                    print ('Added ForeignKey %(field_name) to %(model_name)' %
                            {'field_name': field_name, 'model_name': model_name})
             except DatabaseError, e:
                 db.rollback_transaction()
                 if "already exists" in str(e):
                     if verbosity > 1:
-                        print (_('ForeignKey %(field_name) to %(model_name) already exists') %
+                        print ('ForeignKey %(field_name) to %(model_name) already exists' %
                                {'field_name': field_name, 'model_name': model_name})
                 else:
                     sys.stderr = org_stderror
@@ -66,13 +65,13 @@ def migrate_app(sender, app, created_models=None, verbosity=False, *args, **kwar
                 db.create_unique(table_name, ['%s_id' % model_name, 'category_id'])
                 db.commit_transaction()
                 if verbosity:
-                    print (_('Added Many2Many table between %(model_name) and %(category_table)') %
+                    print ('Added Many2Many table between %(model_name) and %(category_table)' %
                            {'model_name': model_name, 'category_table': 'category'})
             except DatabaseError, e:
                 db.rollback_transaction()
                 if "already exists" in str(e):
                     if verbosity > 1:
-                        print (_('Many2Many table between %(model_name) and %(category_table) already exists') %
+                        print ('Many2Many table between %(model_name) and %(category_table) already exists' %
                                {'model_name': model_name, 'category_table': 'category'})
                 else:
                     sys.stderr = org_stderror
@@ -91,14 +90,14 @@ def drop_field(app_name, model_name, field_name):
     try:
         from south.db import db
     except ImportError:
-        raise ImproperlyConfigured(_('%(dependency) must be installed for this command to work') %
+        raise ImproperlyConfigured('%(dependency) must be installed for this command to work' %
                                    {'dependency': 'South'})
     mdl = models.get_model(app_name, model_name)
 
     fld = '%s.%s.%s' % (app_name, model_name, field_name)
 
     if isinstance(FIELD_REGISTRY[fld], CategoryFKField):
-        print (_('Dropping ForeignKey %(field_name) from %(model_name)') %
+        print ('Dropping ForeignKey %(field_name) from %(model_name)' %
                {'field_name': field_name, 'model_name': model_name})
         try:
             db.start_transaction()
@@ -109,7 +108,7 @@ def drop_field(app_name, model_name, field_name):
             db.rollback_transaction()
             raise e
     elif isinstance(FIELD_REGISTRY[fld], CategoryM2MField):
-        print (_('Dropping Many2Many table between %(model_name) and %(category_table)') %
+        print ('Dropping Many2Many table between %(model_name) and %(category_table)' %
                {'model_name': model_name, 'category_table': 'category'})
         try:
             db.start_transaction()

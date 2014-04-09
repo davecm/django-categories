@@ -1,11 +1,8 @@
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.utils.encoding import force_unicode
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.core.files.storage import get_storage_class
-
-from django.utils.translation import ugettext_lazy as _
 
 from .settings import (RELATION_MODELS, RELATIONS, THUMBNAIL_UPLOAD_PATH,
                         THUMBNAIL_STORAGE)
@@ -55,7 +52,7 @@ class Category(CategoryBase):
             return self.alternate_url
         prefix = reverse('categories_tree_list')
         ancestors = list(self.get_ancestors()) + [self, ]
-        return prefix + '/'.join([force_unicode(i.slug) for i in ancestors]) + '/'
+        return prefix + '/'.join([i.slug for i in ancestors]) + '/'
 
     if RELATION_MODELS:
         def get_related_content_type(self, content_type):
@@ -88,8 +85,8 @@ class Category(CategoryBase):
         super(Category, self).save(*args, **kwargs)
 
     class Meta(CategoryBase.Meta):
-        verbose_name = _('category')
-        verbose_name_plural = _('categories')
+        verbose_name = 'category'
+        verbose_name_plural = 'categories'
 
     class MPTTMeta:
         order_insertion_by = ('order', 'name')
@@ -119,16 +116,16 @@ class CategoryRelationManager(models.Manager):
 
 class CategoryRelation(models.Model):
     """Related category item"""
-    category = models.ForeignKey(Category, verbose_name=_('category'))
+    category = models.ForeignKey(Category, verbose_name='category')
     content_type = models.ForeignKey(
-        ContentType, limit_choices_to=CATEGORY_RELATION_LIMITS, verbose_name=_('content type'))
-    object_id = models.PositiveIntegerField(verbose_name=_('object id'))
+        ContentType, limit_choices_to=CATEGORY_RELATION_LIMITS, verbose_name='content type')
+    object_id = models.PositiveIntegerField(verbose_name='object id')
     content_object = generic.GenericForeignKey('content_type', 'object_id')
-    relation_type = models.CharField(verbose_name=_('relation type'),
+    relation_type = models.CharField(verbose_name='relation type',
         max_length="200",
         blank=True,
         null=True,
-        help_text=_("A generic text field to tag a relation, like 'leadphoto'."))
+        help_text="A generic text field to tag a relation, like 'leadphoto'.")
 
     objects = CategoryRelationManager()
 

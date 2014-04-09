@@ -6,8 +6,6 @@ with customizable metadata and its own name space.
 from django.contrib import admin
 from django.db import models
 from django import forms
-from django.utils.encoding import force_unicode
-from django.utils.translation import ugettext as _
 
 from mptt.models import MPTTModel
 from mptt.fields import TreeForeignKey
@@ -38,10 +36,10 @@ class CategoryBase(MPTTModel):
         blank=True,
         null=True,
         related_name='children',
-        verbose_name=_('parent'))
-    name = models.CharField(max_length=100, verbose_name=_('name'))
-    slug = models.SlugField(verbose_name=_('slug'))
-    active = models.BooleanField(default=True, verbose_name=_('active'))
+        verbose_name='parent')
+    name = models.CharField(max_length=100, verbose_name='name')
+    slug = models.SlugField(verbose_name='slug')
+    active = models.BooleanField(default=True, verbose_name='active')
 
     objects = CategoryManager()
     tree = TreeManager()
@@ -65,7 +63,7 @@ class CategoryBase(MPTTModel):
 
     def __unicode__(self):
         ancestors = self.get_ancestors()
-        return ' > '.join([force_unicode(i.name) for i in ancestors] + [self.name, ])
+        return ' > '.join([i.name for i in ancestors] + [self.name, ])
 
     class Meta:
         abstract = True
@@ -102,8 +100,8 @@ class CategoryBaseAdminForm(forms.ModelForm):
                                 **kwargs).values('id', 'slug'
                                 ) if c['id'] != self.instance.id]
         if self.cleaned_data['slug'] in this_level_slugs:
-            raise forms.ValidationError(_('The slug must be unique among '
-                                          'the items at its level.'))
+            raise forms.ValidationError('The slug must be unique among '
+                                          'the items at its level.')
 
         # Validate Category Parent
         # Make sure the category doesn't set itself or any of its children as
@@ -112,11 +110,11 @@ class CategoryBaseAdminForm(forms.ModelForm):
         if self.cleaned_data.get('parent', None) is None or self.instance.id is None:
             return self.cleaned_data
         elif self.cleaned_data['parent'].id == self.instance.id:
-            raise forms.ValidationError(_("You can't set the parent of the "
-                                          "item to itself."))
+            raise forms.ValidationError("You can't set the parent of the "
+                                          "item to itself.")
         elif self.cleaned_data['parent'].id in decendant_ids:
-            raise forms.ValidationError(_("You can't set the parent of the "
-                                          "item to a descendant."))
+            raise forms.ValidationError("You can't set the parent of the "
+                                          "item to a descendant.")
         return self.cleaned_data
 
 
@@ -146,7 +144,7 @@ class CategoryBaseAdmin(TreeEditor, admin.ModelAdmin):
                 item.active = False
                 item.save()
                 item.children.all().update(active=False)
-    deactivate.short_description = _('Deactivate selected categories and their children')
+    deactivate.short_description = 'Deactivate selected categories and their children'
 
     def activate(self, request, queryset):
         """
@@ -159,4 +157,4 @@ class CategoryBaseAdmin(TreeEditor, admin.ModelAdmin):
             item.active = True
             item.save()
             item.children.all().update(active=True)
-    activate.short_description = _('Activate selected categories and their children')
+    activate.short_description = 'Activate selected categories and their children'

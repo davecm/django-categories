@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
 
 DEFAULT_SETTINGS = {
     'ALLOW_SLUG_CHANGE': False,
@@ -27,7 +26,7 @@ if DEFAULT_SETTINGS['SLUG_TRANSLITERATOR']:
         DEFAULT_SETTINGS['SLUG_TRANSLITERATOR'] = getattr(module, bits[-1])
     else:
         from django.core.exceptions import ImproperlyConfigured
-        raise ImproperlyConfigured(_('%(transliterator) must be a callable or a string.') %
+        raise ImproperlyConfigured('%(transliterator) must be a callable or a string.' %
                                    {'transliterator': 'SLUG_TRANSLITERATOR'})
 else:
     DEFAULT_SETTINGS['SLUG_TRANSLITERATOR'] = lambda x: x

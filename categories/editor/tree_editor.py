@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.db.models.query import QuerySet
 from django.contrib.admin.views.main import ChangeList
 from django.http import HttpResponseRedirect
-from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin.options import IncorrectLookupParameters
 from django import template
 from django.shortcuts import render_to_response
@@ -164,7 +163,7 @@ class TreeEditor(admin.ModelAdmin):
             # is screwed up with the database, so display an error page.
             if ERROR_FLAG in request.GET.keys():
                 return render_to_response(
-                    'admin/invalid_setup.html', {'title': _('Database error')})
+                    'admin/invalid_setup.html', {'title': 'Database error'})
             return HttpResponseRedirect(request.path + '?' + ERROR_FLAG + '=1')
 
         # If the request was POSTed, this might be a bulk action or a bulk edit.
@@ -249,7 +248,7 @@ class TreeEditor(admin.ModelAdmin):
 
             context.update({
                 'module_name': force_unicode(opts.verbose_name_plural),
-                'selection_note': _('0 of %(cnt)s selected') % {'cnt': len(cl.result_list)},
+                'selection_note': '0 of %(cnt)s selected' % {'cnt': len(cl.result_list)},
                 'selection_note_all': selection_note_all % {'total_count': cl.result_count},
             })
         context.update(extra_context or {})
